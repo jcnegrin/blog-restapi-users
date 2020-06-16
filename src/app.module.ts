@@ -14,11 +14,11 @@ import { LoginLogController } from './controllers/login-log/login-log.controller
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'negrin-blog.cipyhvmh2n72.eu-west-1.rds.amazonaws.com',
+      host: process.env.AWS_MYSQL_HOST,
       port: 3306,
-      username: 'admin',
-      password: 'Xgn4hioa73;',
-      database: 'negrin_blog',
+      username: process.env.AWS_MYSQL_USERNAME,
+      password: process.env.AWS_MYSQL_PASSWORD,
+      database: process.env.AWS_MYSQL_DATABASE,
       entities: [User, Role, Login_logs],
       synchronize: true,
       logging: true

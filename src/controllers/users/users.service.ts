@@ -43,7 +43,7 @@ export class UsersService {
 
     generateJWT(user: User): string {
         delete user.password;
-        return jwt.sign(JSON.stringify(user), 'hellowordsecret');
+        return jwt.sign(JSON.stringify(user), process.env.JWT_SECRET);
     }
 
     findByEmail(email: string): Promise<User> {

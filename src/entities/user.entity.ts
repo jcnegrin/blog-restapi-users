@@ -10,15 +10,15 @@ export class User {
 
     @PrimaryColumn()
     email: string;
+    
+    @PrimaryColumn()
+    user_id: string;
 
     @Column()
     password: string;
 
     @Column({ default: true })
     enabled: boolean;
-
-    @Column()
-    user_id: string;
 
     @Column()
     first_name: string;
