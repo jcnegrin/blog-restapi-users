@@ -8,7 +8,7 @@ import { Role } from './entities/role.entity';
 import { Login_logs } from './entities/login_logs.entity';
 import { UsersModule } from './controllers/users/users.module';
 import { RolesModule } from './controllers/roles/roles.module';
-import { LoginLogController } from './controllers/login-log/login-log.controller';
+import { LoginLogModule } from './controllers/login-log/login-log.module';
 
 @Module({
   imports: [
@@ -24,9 +24,10 @@ import { LoginLogController } from './controllers/login-log/login-log.controller
       logging: true
     }),
     UsersModule,
-    RolesModule
+    RolesModule,
+    LoginLogModule
   ],
-  controllers: [AppController, LoginLogController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {

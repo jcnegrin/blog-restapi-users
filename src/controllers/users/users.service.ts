@@ -8,13 +8,16 @@ import { RolesService } from 'src/controllers/roles/roles.service';
 import {getRepository} from "typeorm";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { LoginLogService } from '../login-log/login-log.service';
+import { CreateLogDto } from 'src/dto/CreateLogDto';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private usersRepository: Repository<User>,
-        private rolesService: RolesService
+        private rolesService: RolesService,
+        private loginLogsService: LoginLogService
     ) {}
 
     async CreateUser(newUser: CreateUserDto): Promise<User>
@@ -52,6 +55,11 @@ export class UsersService {
         .where("user.email = :email", {email})
         .getOne();
         return user;
+    }
+
+    async addLoginLog(user: User, ip: string): Promise<void> {
+        const log: CreateLogDto = {user, ip};
+        await this.loginLogsService.saveLog(log);
     }
 
     findAll(): Promise<User[]> {

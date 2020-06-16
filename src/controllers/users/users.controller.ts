@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, UnauthorizedException, Ip } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from 'src/dto/CreateUserDto';
@@ -33,7 +33,7 @@ export class UsersController {
     }
 
     @Post('login')
-    async login(@Body() login: LoginDto): Promise<any> {
+    async login(@Body() login: LoginDto, @Ip() ip: string): Promise<any> {
         
         if (!login.email || !login.password) {
             throw new InvalidLoginDataException();
@@ -53,6 +53,7 @@ export class UsersController {
             throw new UnauthorizedException();
         }
 
+        this.userService.addLoginLog(user, ip);
         const jwt = this.userService.generateJWT(user);
 
         return {auth: true, token: jwt, user};
