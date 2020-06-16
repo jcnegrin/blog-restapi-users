@@ -6,6 +6,8 @@ import { CreateUserDto } from 'src/dto/CreateUserDto';
 import { Role } from 'src/entities/role.entity';
 import { RolesService } from 'src/controllers/roles/roles.service';
 import {getRepository} from "typeorm";
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +17,7 @@ export class UsersService {
         private rolesService: RolesService
     ) {}
 
-    async save(newUser: CreateUserDto): Promise<User>
+    async CreateUser(newUser: CreateUserDto): Promise<User>
     {
         const userRole: Role = await this.rolesService.findRoleByName('User');
         const user = {
@@ -23,7 +25,25 @@ export class UsersService {
             enabled: true,
             role: userRole            
         }
-        return this.usersRepository.save(user);
+        const addedUser: User = await this.usersRepository.save(user);
+        delete addedUser.password;
+        return addedUser;
+    }
+
+    async generateSaltedPassword(plainPassword: string) : Promise<string> {
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(plainPassword, salt);
+        return hash;
+    }
+
+    async comparePassword(plainTextPassword: string, hash: string): Promise<boolean> {
+        return await bcrypt.compare(plainTextPassword, hash);
+    }
+
+    generateJWT(user: User): string {
+        delete user.password;
+        return jwt.sign(JSON.stringify(user), 'hellowordsecret');
     }
 
     findByEmail(email: string): Promise<User> {
