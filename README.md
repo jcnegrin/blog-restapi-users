@@ -28,6 +28,16 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Environment Variables
+
+```bash
+$ AWS_MYSQL_HOST
+$ AWS_MYSQL_USERNAME
+$ AWS_MYSQL_PASSWORD
+$ AWS_MYSQL_DATABASE
+$ JWT_SECRET
+```
+
 ## Installation
 
 ```bash
