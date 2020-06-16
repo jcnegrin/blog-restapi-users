@@ -27,8 +27,8 @@ import { LoginLogModule } from './controllers/login-log/login-log.module';
     RolesModule,
     LoginLogModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
   constructor(private connection: Connection) {}
