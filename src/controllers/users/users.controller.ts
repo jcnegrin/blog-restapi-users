@@ -7,6 +7,7 @@ import { UserExistException } from 'src/exception/userExist.exception';
 import { LoginDto } from 'src/dto/LoginDto';
 import { InvalidLoginDataException } from 'src/exception/InvalidLoginData.exception';
 import { UserDoesNotExistException } from 'src/exception/UserDoesNotExist.exception';
+import { BlockedUserException } from 'src/exception/BlockedUser.exception';
 
 @Controller('users')
 export class UsersController {
@@ -41,6 +42,10 @@ export class UsersController {
         const user: User = await this.userService.findByEmail(login.email);
         if(!user) {
             throw new UserDoesNotExistException();
+        }
+
+        if (!user.enabled) {
+            throw new BlockedUserException();
         }
 
         const authValid = await this.userService.comparePassword(login.password, user.password);
