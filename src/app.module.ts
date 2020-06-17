@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,9 @@ import { Login_logs } from './entities/login_logs.entity';
 import { UsersModule } from './controllers/users/users.module';
 import { RolesModule } from './controllers/roles/roles.module';
 import { LoginLogModule } from './controllers/login-log/login-log.module';
+import { AuthMiddleware } from './business/auth.middleware';
+import { LoginLogController } from './controllers/login-log/login-log.controller';
+import { RolesController } from './controllers/roles/roles.controller';
 
 @Module({
   imports: [
@@ -30,6 +33,13 @@ import { LoginLogModule } from './controllers/login-log/login-log.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private connection: Connection) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes(LoginLogController, RolesController)
+  }
+
 }
