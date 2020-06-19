@@ -53,7 +53,8 @@ export class UsersService {
         const user: Promise<User> = getRepository(User)
         .createQueryBuilder("user")
         .where("user.email = :email", {email})
-        .getOne();
+        .leftJoinAndSelect("user.role", "role")
+        .getOne();        
         return user;
     }
 

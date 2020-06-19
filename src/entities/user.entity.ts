@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, PrimaryColumn, UpdateDateColumn, JoinColumn, JoinTable } from 'typeorm';
 import { Role } from './role.entity';
 
 @Entity()
@@ -29,6 +29,7 @@ export class User {
     @ManyToOne(
         type => Role, 
         role => role.id)
+    @JoinTable()
     role: Role;
 
     @CreateDateColumn()
