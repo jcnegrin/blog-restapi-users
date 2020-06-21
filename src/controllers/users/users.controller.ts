@@ -14,7 +14,7 @@ export class UsersController {
 
     constructor(private userService: UsersService) {}
 
-    @Post()
+    @Post('signup')
     async createNew(@Body() createUser: CreateUserDto): Promise<User> {
         const user = await this.userService.findByEmail(createUser.email);
         if (!user) {
