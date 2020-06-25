@@ -14,14 +14,14 @@ before_install:
   - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
 install:
-  - docker pull ${CONTAINER_IMAGE}:latest || true
+  - docker pull ${DOCKER_USERNAME}/${CONTAINER_IMAGE}:latest || true
   - >
       docker build
       --pull
-      --cache-from ${CONTAINER_IMAGE}:latest
-      --tag ${CONTAINER_IMAGE}:latest
+      --cache-from ${DOCKER_USERNAME}/${CONTAINER_IMAGE}:latest
+      --tag ${DOCKER_USERNAME}/${CONTAINER_IMAGE}:latest
       .
-  - docker tag ${CONTAINER_IMAGE}:latest ${CONTAINER_IMAGE}:latest
+  - docker tag ${DOCKER_USERNAME}/${CONTAINER_IMAGE}:latest ${DOCKER_USERNAME}/${CONTAINER_IMAGE}:latest
   - docker push ${DOCKER_USERNAME}/${CONTAINER_IMAGE}
 
 after_install:
