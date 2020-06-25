@@ -16,13 +16,13 @@ before_install:
 install:
   - docker pull ${CONTAINER_IMAGE}:latest || true
   - >
-      sudo docker build
+      docker build
       --pull
       --cache-from ${CONTAINER_IMAGE}:latest
       --tag ${CONTAINER_IMAGE}:latest
       .
   - docker tag ${CONTAINER_IMAGE}:latest ${CONTAINER_IMAGE}:latest
-  - docker push ${CONTAINER_IMAGE}
+  - docker push ${DOCKER_USERNAME}/${CONTAINER_IMAGE}
 
 after_install:
   - docker logout
