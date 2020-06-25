@@ -3,7 +3,7 @@ language: minimal
 services: docker
 
 env:
-  - APP_NAME="jcnegrin/blog-restapi-users"
+  - CONTAINER_IMAGE=blog-restapi-users
 
 before_install: 
   - sudo apt update -y
@@ -14,9 +14,12 @@ before_install:
   - docker-compose --version
 
 script:
-  - docker build -t $APP_NAME .
-
-after_success:
-  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
-  - docker push $APP_NAME
-  - docker logout
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - >
+      docker build
+      --pull
+      --cache-from $CONTAINER_IMAGE:latest
+      --tag $CONTAINER_IMAGE:latest
+      .
+  - docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
+  - docker push $CONTAINER_IMAGE
