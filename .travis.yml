@@ -18,5 +18,5 @@ script:
 
 after_success:
   - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
-  - docker push $(IMAGE)
+  - docker push $APP_NAME
   - docker logout
