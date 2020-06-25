@@ -11,7 +11,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - docker login . -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+  - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
 install:
   - docker pull ${CONTAINER_IMAGE}:latest || true
@@ -25,4 +25,4 @@ install:
   - docker push ${CONTAINER_IMAGE}
 
 after_install:
-  - sudo docker logout
+  - docker logout
