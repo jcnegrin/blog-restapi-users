@@ -1,6 +1,7 @@
 language: minimal
 
-services: docker
+services: 
+  - docker
 
 stages:
   - package
@@ -8,14 +9,6 @@ stages:
 
 env:
   - CONTAINER_IMAGE=blog-restapi-users
-
-before_install: 
-  - sudo apt update -y
-  - sudo apt install realpath python python-pip -y
-  - sudo apt install --only-upgrade docker-ce -y
-  - sudo pip install docker-compose || true
-  - docker info
-  - docker-compose --version
 
 docker-build:
   stage: package
