@@ -1,37 +1,31 @@
 language: minimal
 
-services: 
-  - docker
-
-stages:
-  - package
-
+services: docker
 
 env:
   - CONTAINER_IMAGE=blog-restapi-users
 
-docker-build:
-  stage: package
-  before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-  after_script:
-    - docker logout
-  script:
-    # fetches the latest image (not failing if image is not found)
-    - docker pull $CONTAINER_IMAGE:latest || true
-    # builds the project, passing proxy variables, and vcs vars for LABEL
-    # notice the cache-from, which is going to use the image we just pulled locally
-    # the built image is tagged locally with the commit SHA, and then pushed to
-    # the GitLab registry
-    - >
+before_install:
+  - docker -v && docker-compose -v
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+  - chmod +x ./kubectl
+  - sudo mv ./kubectl /usr/local/bin/kubectl
+  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+install:
+  - docker pull $CONTAINER_IMAGE:latest || true
+  - >
       docker build
       --pull
       --cache-from $CONTAINER_IMAGE:latest
       --tag $CONTAINER_IMAGE:latest
       .
-    - docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
-    - docker push $CONTAINER_IMAGE
+  - docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
+  - docker push $CONTAINER_IMAGE
 
-
-
-  
+after_install:
+  - docker logout
