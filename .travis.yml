@@ -11,21 +11,18 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-  - chmod +x ./kubectl
-  - sudo mv ./kubectl /usr/local/bin/kubectl
-  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  - sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 install:
-  - docker pull $CONTAINER_IMAGE:latest || true
+  - sudo docker pull $CONTAINER_IMAGE:latest || true
   - >
-      docker build
+      sudo docker build
       --pull
       --cache-from $CONTAINER_IMAGE:latest
       --tag $CONTAINER_IMAGE:latest
       .
-  - docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
-  - docker push $CONTAINER_IMAGE
+  - sudo docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
+  - sudo docker push $CONTAINER_IMAGE
 
 after_install:
-  - docker logout
+  - sudo docker logout
