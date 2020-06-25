@@ -2,6 +2,10 @@ language: minimal
 
 services: docker
 
+stages:
+  - package
+
+
 env:
   - CONTAINER_IMAGE=blog-restapi-users
 
@@ -13,17 +17,28 @@ before_install:
   - docker info
   - docker-compose --version
 
-script:
-  - docker pull $CONTAINER_IMAGE:latest || true
-  - >
+docker-build:
+  stage: package
+  before_script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  after_script:
+    - docker logout
+  script:
+    # fetches the latest image (not failing if image is not found)
+    - docker pull $CONTAINER_IMAGE:latest || true
+    # builds the project, passing proxy variables, and vcs vars for LABEL
+    # notice the cache-from, which is going to use the image we just pulled locally
+    # the built image is tagged locally with the commit SHA, and then pushed to
+    # the GitLab registry
+    - >
       docker build
       --pull
       --cache-from $CONTAINER_IMAGE:latest
       --tag $CONTAINER_IMAGE:latest
       .
-  - docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
-  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
-  - docker push $CONTAINER_IMAGE
-  - docker logout
+    - docker tag $CONTAINER_IMAGE:latest $CONTAINER_IMAGE:latest
+    - docker push $CONTAINER_IMAGE
+
+
 
   
