@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Post, Body, UnauthorizedException, Ip } from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, UnauthorizedException, Ip, BadRequestException } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from 'src/dto/CreateUserDto';
@@ -15,13 +15,20 @@ export class UsersController {
     constructor(private userService: UsersService) {}
 
     @Post('signup')
-    async createNew(@Body() createUser: CreateUserDto): Promise<User> {
+    async createNew(@Body() createUser: CreateUserDto, @Ip() ip: string): Promise<any> {
+
+        if (createUser.first_name === '' || createUser.last_name === '' || createUser.email === '' || createUser.password === '') {
+            throw new BadRequestException();
+        }
+
         const user = await this.userService.findByEmail(createUser.email);
         if (!user) {
             const password_hash = await this.userService.generateSaltedPassword(createUser.password);
             createUser.password = password_hash;
             const newUser: User = await this.userService.CreateUser(createUser);
-            return newUser;
+            this.userService.addLoginLog(newUser, ip);
+            const jwt = this.userService.generateJWT(newUser);
+            return jwt;
         } else {
             throw new UserExistException();
         }

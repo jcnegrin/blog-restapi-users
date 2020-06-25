@@ -1,0 +1,22 @@
+language: minimal
+
+services: docker
+
+env:
+  - APP_NAME=blog-restapi-users
+
+before_install: 
+  - sudo apt update -y
+  - sudo apt install realpath python python-pip -y
+  - sudo apt install --only-upgrade docker-ce -y
+  - sudo pip install docker-compose || true
+  - docker info
+  - docker-compose --version
+
+script:
+  - docker build -t $DOCKER_USERNAME/$(APP_NAME) .
+
+after_success:
+  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
+  - docker push $(IMAGE)
+  - docker logout
